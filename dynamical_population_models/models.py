@@ -302,15 +302,6 @@ class EmpiricalBranchingFraction(object):
 
         probability = xp.einsum(
             "i,j,k->ijk",
-            self.first_generation_mass_ratio(
-                alpha=alpha,
-                beta=beta,
-                mmin=mmin,
-                mmax=mmax,
-                lam=lam,
-                mpp=mpp,
-                sigpp=sigpp,
-            ),
             first_generation_spin_magnitude_grid(
                 self.a_1_array,
                 alpha=alpha_chi,
@@ -325,6 +316,15 @@ class EmpiricalBranchingFraction(object):
                 delta=delta_chi,
                 a_max=a_max,
             ),
+            self.first_generation_mass_ratio(
+                alpha=alpha,
+                beta=beta,
+                mmin=mmin,
+                mmax=mmax,
+                lam=lam,
+                mpp=mpp,
+                sigpp=sigpp,
+            )
         )
         branching_ratio = trapz(
             trapz(
@@ -407,10 +407,10 @@ class EmpiricalBranchingFractionNoSpin_1e7(EmpiricalBranchingFractionNoSpin):
     def __retention_file__(self):
         return os.path.join(os.path.dirname(__file__), "grid_dict_1e7")
 
-class EmpiricalBranchingFractionNoSpin_1e8(EmpiricalBranchingFractionNoSpin):
+class paNoSpin_1e8(EmpiricalBranchingFractionNoSpin):
     def __retention_file__(self):
         return os.path.join(os.path.dirname(__file__), "grid_dict_1e8")
-    
+
 def low_spin_component(spin):
     return xp.asarray(spin == 0).astype(float)
 
