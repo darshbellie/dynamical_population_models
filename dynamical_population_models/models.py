@@ -229,6 +229,7 @@ class EmpiricalBranchingFraction(object):
             allow_pickle=True,
             encoding="latin1",
         )
+        print('Using retention grid: ',self.retention_file)
         self.a_1_array = xp.asarray(branching_dataset["a1"])
         self.a_2_array = xp.asarray(branching_dataset["a2"])
         self.mass_ratio_array = xp.asarray(branching_dataset["q"])
