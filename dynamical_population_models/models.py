@@ -408,7 +408,7 @@ class EmpiricalBranchingFractionNoSpin_1e7(EmpiricalBranchingFractionNoSpin):
     def __retention_file__(self):
         return os.path.join(os.path.dirname(__file__), "grid_dict_1e7")
 
-class paNoSpin_1e8(EmpiricalBranchingFractionNoSpin):
+class EmpiricalBranchingFractionNoSpin_1e8(EmpiricalBranchingFractionNoSpin):
     def __retention_file__(self):
         return os.path.join(os.path.dirname(__file__), "grid_dict_1e8")
 
