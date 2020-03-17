@@ -534,7 +534,7 @@ def two_component_primary_mass_ratio_dynamical_without_spins(
 
 
 def one_point_five_generation_mass_ratio(dataset, spectal_index, mmin):
-    split = (1 + mmin / dataset["mass_1"]) / 2
+    split = 0.5
     prob = (
         powerlaw(
             dataset["mass_ratio"],
