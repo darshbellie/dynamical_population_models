@@ -156,6 +156,43 @@ def first_generation_mass_spin(
     )
     return first_generation_mass * first_generation_spin
 
+def first_generation_mass_spin_grid(
+    dataset,
+    alpha,
+    beta,
+    mmin,
+    mmax,
+    lam,
+    mpp,
+    sigpp,
+    alpha_chi,
+    beta_chi,
+    delta_chi,
+):
+    first_generation_mass = two_component_primary_mass_ratio(
+        dataset=dataset,
+        alpha=alpha,
+        beta=beta,
+        mmin=mmin,
+        mmax=mmax,
+        lam=lam,
+        mpp=mpp,
+        sigpp=sigpp,
+    )
+    first_generation_spin = first_generation_spin_magnitude_grid(
+        dataset["a_1"][:,0,0,0],
+        alpha=alpha_chi,
+        beta=beta_chi,
+        delta=delta_chi,
+        a_max=1,
+    ) * first_generation_spin_magnitude_grid(
+        dataset["a_2"][0,:,0,0],
+        alpha=alpha_chi,
+        beta=beta_chi,
+        delta=delta_chi,
+        a_max=1,
+    )
+    return first_generation_mass * first_generation_spin
 
 def one_point_five_generation_mass_spin(
     dataset,
@@ -188,6 +225,45 @@ def one_point_five_generation_mass_spin(
         dataset["a_1"], scale=1, alpha=alpha_2g, beta=beta_2g
     ) * first_generation_spin_magnitude(
         dataset["a_2"],
+        alpha=alpha_chi,
+        beta=beta_chi,
+        delta=delta_chi,
+        a_max=1,
+    )
+
+    return one_point_five_generation_mass * one_point_five_generation_spin
+
+def one_point_five_generation_mass_spin_grid(
+    dataset,
+    alpha,
+    beta,
+    mmin,
+    mmax,
+    lam,
+    mpp,
+    sigpp,
+    alpha_chi,
+    beta_chi,
+    delta_chi,
+):
+    params = dict(
+        mmin=mmin * 2, mmax=mmax * 2, lam=lam, mpp=mpp * 2, sigpp=sigpp * 2
+    )
+
+    one_point_five_generation_mass = two_component_single(
+        dataset["mass_1"], alpha=alpha, **params
+    ) * one_point_five_generation_mass_ratio(
+        dataset, spectal_index=beta * 1.5, mmin=mmin
+    )
+
+    alpha_2g, beta_2g, _ = mu_chi_var_chi_max_to_alpha_beta_max(
+        mu_chi=0.67, var_chi=0.01, amax=1
+    )
+
+    one_point_five_generation_spin = beta_dist(
+        dataset["a_1"], scale=1, alpha=alpha_2g, beta=beta_2g
+    ) * first_generation_spin_magnitude_grid(
+        dataset["a_2"][0,:,:,:],
         alpha=alpha_chi,
         beta=beta_chi,
         delta=delta_chi,
