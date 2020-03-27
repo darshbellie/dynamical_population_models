@@ -156,7 +156,7 @@ def first_generation_mass_spin(
     )
     return first_generation_mass * first_generation_spin
 
-def first_generation_mass_spin_grid(
+def first_generation_mass_spin_big_grid(
     dataset,
     alpha,
     beta,
@@ -179,18 +179,21 @@ def first_generation_mass_spin_grid(
         mpp=mpp,
         sigpp=sigpp,
     )
-    first_generation_spin = first_generation_spin_magnitude_grid(
-        dataset["a_1"][:,0,0,0],
+    first_generation_spin = first_generation_spin_magnitude_big_grid(
+        dataset["a_1"],
         alpha=alpha_chi,
         beta=beta_chi,
         delta=delta_chi,
         a_max=1,
-    ) * first_generation_spin_magnitude_grid(
-        dataset["a_2"][0,:,0,0],
+        spin_array=dataset['a_1'][:,0,0,0]
+    ) * first_generation_spin_magnitude_big_grid(
+        dataset["a_2"],
         alpha=alpha_chi,
         beta=beta_chi,
         delta=delta_chi,
         a_max=1,
+        spin_array=dataset['a_2'][0, :, 0, 0]
+
     )
     return first_generation_mass * first_generation_spin
 
@@ -233,7 +236,7 @@ def one_point_five_generation_mass_spin(
 
     return one_point_five_generation_mass * one_point_five_generation_spin
 
-def one_point_five_generation_mass_spin_grid(
+def one_point_five_generation_mass_spin_big_grid(
     dataset,
     alpha,
     beta,
@@ -262,12 +265,14 @@ def one_point_five_generation_mass_spin_grid(
 
     one_point_five_generation_spin = beta_dist(
         dataset["a_1"], scale=1, alpha=alpha_2g, beta=beta_2g
-    ) * first_generation_spin_magnitude_grid(
-        dataset["a_2"][0,:,:,:],
+    ) * first_generation_spin_magnitude_big_grid(
+        dataset["a_2"],
         alpha=alpha_chi,
         beta=beta_chi,
         delta=delta_chi,
         a_max=1,
+        spin_array=dataset['a_2'][0, :, 0, 0]
+
     )
 
     return one_point_five_generation_mass * one_point_five_generation_spin
@@ -502,6 +507,10 @@ def low_spin_component_grid(spin):
     delta = xp.asarray(spin == 0).astype(float)
     return delta / trapz(delta, spin)
 
+def low_spin_component_big_grid(spin, spin_array):
+    delta = xp.asarray(spin == 0).astype(float)
+    delta_norm = xp.asarray(spin_array == 0).astype(float)
+    return delta / trapz(delta_norm, spin_array)
 
 def first_generation_spin_magnitude(spin, alpha, beta, delta, a_max):
     beta_component = beta_dist(
@@ -510,13 +519,19 @@ def first_generation_spin_magnitude(spin, alpha, beta, delta, a_max):
     beta_component[beta_component == NAN_INF] = 0
     return delta * low_spin_component(spin) + (1 - delta) * beta_component
 
-
 def first_generation_spin_magnitude_grid(spin, alpha, beta, delta, a_max):
     beta_component = beta_dist(
         xx=spin, alpha=alpha, beta=beta, scale=a_max
     )
     beta_component[beta_component == NAN_INF] = 0
     return delta * low_spin_component_grid(spin) + (1 - delta) * beta_component
+
+def first_generation_spin_magnitude_big_grid(spin, alpha, beta, delta, a_max, spin_array):
+    beta_component = beta_dist(
+        xx=spin, alpha=alpha, beta=beta, scale=a_max
+    )
+    beta_component[beta_component == NAN_INF] = 0
+    return delta * low_spin_component_big_grid(spin, spin_array) + (1 - delta) * beta_component
 
 
 def two_component_primary_mass_ratio_dynamical_without_spins(
