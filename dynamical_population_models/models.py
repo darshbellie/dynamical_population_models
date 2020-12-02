@@ -10,7 +10,7 @@ from gwpopulation.models.mass import (
     two_component_single,
 )
 from gwpopulation.models.spin import iid_spin_magnitude_beta
-
+import pdb
 NAN_INF = xp.nan_to_num(xp.inf)
 
 
@@ -323,7 +323,8 @@ class EmpiricalBranchingFraction(object):
         self.first_generation_data = dict(
             mass_1=self.mass_1_grid, mass_ratio=self.mass_ratio_grid
         )
-
+        
+        self.dm = self.mass_1s[1] - self.mass_1s[0]
     def __call__(
         self,
         dataset,
@@ -422,7 +423,10 @@ class EmpiricalBranchingFraction(object):
 
     def first_generation_mass_ratio(
         self, alpha, beta, mmin, mmax, lam, mpp, sigpp
-    ):
+    ):  
+        grid_shift =  (mmin-self.mass_1s[0]-self.dm/2) % self.dm
+
+        self.first_generation_data['mass_1'] += grid_shift
         first_generation_mass = two_component_primary_mass_ratio(
             dataset=self.first_generation_data,
             alpha=alpha,
@@ -433,6 +437,7 @@ class EmpiricalBranchingFraction(object):
             mpp=mpp,
             sigpp=sigpp,
         )
+        self.first_generation_data['mass_1'] -= grid_shift
         return trapz(first_generation_mass, self.mass_1s, axis=0)
 
 
@@ -508,8 +513,9 @@ def first_generation_spin_magnitude_big_grid(spin, alpha, beta, delta, a_max, sp
         xx=spin, alpha=alpha, beta=beta, scale=a_max
     )
     beta_component[beta_component == NAN_INF] = 0
-    return delta * low_spin_component_big_grid(spin, spin_array) + (1 - delta) * beta_component
-
+    low_component = low_spin_component_big_grid(spin, spin_array)
+    #return delta * low_component + (1 - delta) * beta_component
+    return beta_component
 
 def two_component_primary_mass_ratio_dynamical_without_spins(
     dataset,
